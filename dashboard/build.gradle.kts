@@ -15,7 +15,7 @@ android {
     buildTypes {
         release {
             optimization {
-                enable = false
+                enable = true
             }
         }
     }
@@ -28,7 +28,10 @@ android {
 dependencies {
     implementation(project(":app"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+
+
 }
