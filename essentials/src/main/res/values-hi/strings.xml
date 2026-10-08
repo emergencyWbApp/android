@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="application_name">इमरजेंसी डब्ल्यूबी</string>
+    <string name="offline_ready">ऑफ़लाइन तैयार</string>
+
+    <string name="emergency_number">११२</string>
+    <string name="emergency_call">आपातकालीन कॉल</string>
+    <string name="emergency_call_subtitle">मदद के लिए अभी कॉल करें</string>
+
+    <string name="district_name">कोलकाता</string>
+    <string name="district_change">जिला बदलें</string>
+
+    <string name="quick_actions">त्वरित कार्रवाई</string>
+    <string name="police">पुलिस</string>
+    <string name="police_subtitle">मदद के लिए संपर्क करें</string>
+    <string name="fire">फायर</string>
+    <string name="fire_subtitle">दुर्घटना या आग</string>
+    <string name="ambulance">एम्बुलेंस</string>
+    <string name="ambulance_subtitle">चिकित्सा सहायता</string>
+    <string name="blood_bank">ब्लड बैंक</string>
+    <string name="blood_bank_subtitle">रक्त की आवश्यकता</string>
+
+    <string name="offline_info">इंटरनेट के बिना आपातकालीन जानकारी</string>
+
+    <string name="tab_home">होम</string>
+    <string name="tab_first_aid">प्राथमिक चिकित्सा</string>
+    <string name="tab_guidelines">दिशानिर्देश</string>
+    <string name="tab_profile">प्रोफ़ाइल</string>
+
+    <!-- Menu -->
+    <string name="menu_settings">सेटिंग्स</string>
+    <string name="menu_about">के बारे में</string>
+
+    <!-- Settings Page -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="settings_general">सामान्य</string>
+    <string name="settings_language">भाषा</string>
+    <string name="settings_select_language">भाषा चुनें</string>
+    <string name="settings_about">के बारे में</string>
+    <string name="settings_version">संस्करण</string>
+
+    <!-- Common -->
+    <string name="cancel">रद्द करें</string>
+</resources>

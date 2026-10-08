@@ -26,7 +26,7 @@ class MainActivity : Activity() {
     private lateinit var statusText: TextView
     private lateinit var progressBar: ProgressBar
 
-    private val dashboardModule = "dashboard"
+    private val dashboardModule = "essentials"
 
     private var downloadStarted = false
 
@@ -299,29 +299,21 @@ class MainActivity : Activity() {
     }
 
     private fun launchDashboard() {
-
-        val intent =
-            Intent().apply {
-
-                setClassName(
-                    "in.emergencyWbApp",
-                    "in.emergencyWbApp.dashboard.DashboardActivity"
-                )
-            }
-
         try {
-
+            val activityClass = Class.forName("in.emergencyWbApp.essentials.EssentialsActivity")
+            val intent = Intent(this, activityClass)
             startActivity(intent)
-
-        } catch (exception: Exception) {
-
-            Toast.makeText(
-                this,
-                "Dashboard launch error: ${exception.message}",
-                Toast.LENGTH_LONG
-            ).show()
+        } catch (e: ClassNotFoundException) {
+            Toast.makeText(this, "Dashboard module not installed yet", Toast.LENGTH_LONG).show()
+            // Optionally trigger download again
+            downloadDashboard()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Dashboard launch error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
+
+
+
 
     override fun onStart() {
 

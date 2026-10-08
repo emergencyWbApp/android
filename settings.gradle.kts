@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Emergency WB"
 include(":app")
-include(":dashboard")
+
+include(":essentials")

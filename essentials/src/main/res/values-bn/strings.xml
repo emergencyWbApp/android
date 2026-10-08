@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Header -->
+    <string name="application_name">ইমার্জেন্সি ডব্লিউবি</string>
+    <string name="offline_ready">অফলাইন প্রস্তুত</string>
+
+    <!-- Emergency Button -->
+    <string name="emergency_number">১১২</string>
+    <string name="emergency_call">জরুরি কল</string>
+    <string name="emergency_call_subtitle">সাহায্যের জন্য এখনই কল করুন</string>
+
+    <!-- District -->
+    <string name="district_name">কলকাতা</string>
+    <string name="district_change">জেলা পরিবর্তন</string>
+
+    <!-- Quick Actions -->
+    <string name="quick_actions">দ্রুত আয়োজন</string>
+    <string name="police">পুলিশ</string>
+    <string name="police_subtitle">সাহায্যের জন্য যোগাযোগ</string>
+    <string name="fire">ফায়ার</string>
+    <string name="fire_subtitle">দুর্ঘটনা বা আগুন</string>
+    <string name="ambulance">অ্যাম্বুলেন্স</string>
+    <string name="ambulance_subtitle">চিকিৎসা সহায়তা</string>
+    <string name="blood_bank">ব্লাড ব্যাংক</string>
+    <string name="blood_bank_subtitle">রক্ত প্রয়োজন</string>
+
+    <!-- Offline Banner -->
+    <string name="offline_info">ইন্টারনেট ছাড়াই জরুরি তথ্য</string>
+
+    <!-- Bottom Tabs -->
+    <string name="tab_home">হোম</string>
+    <string name="tab_first_aid">প্রাথমিক চিকিৎসা</string>
+    <string name="tab_guidelines">জরুরি নির্দেশিকা</string>
+    <string name="tab_profile">প্রোফাইল</string>
+
+    <!-- Menu -->
+    <string name="menu_settings">সেটিংস</string>
+    <string name="menu_about">সম্পর্কে</string>
+
+    <!-- Settings Page -->
+    <string name="settings_title">সেটিংস</string>
+    <string name="settings_general">সাধারণ</string>
+    <string name="settings_language">ভাষা</string>
+    <string name="settings_select_language">ভাষা নির্বাচন করুন</string>
+    <string name="settings_about">সম্পর্কে</string>
+    <string name="settings_version">সংস্করণ</string>
+
+    <!-- Common -->
+    <string name="cancel">বাতিল</string>
+</resources>
