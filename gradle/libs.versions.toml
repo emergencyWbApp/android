@@ -7,6 +7,7 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 appcompat = "1.8.0"
 material = "1.14.0"
+featureDelivery = "2.1.0"
 featureDeliveryKtx = "2.1.0"
 foundation = "1.12.1"
 runtime = "1.12.1"
@@ -28,6 +29,7 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+play-feature-delivery = { group = "com.google.android.play", name = "feature-delivery", version.ref = "featureDelivery" }
 feature-delivery-ktx = { group = "com.google.android.play", name = "feature-delivery-ktx", version.ref = "featureDeliveryKtx" }
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
@@ -41,7 +43,6 @@ androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtxVersion" }

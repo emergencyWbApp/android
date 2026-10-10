@@ -27,6 +27,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+
 }
 
 dependencies {
@@ -44,8 +46,11 @@ dependencies {
 
 
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core.ktx)
+
     implementation(libs.feature.delivery.ktx)
+
+
+
     implementation(libs.material)
 
     testImplementation(libs.junit)
@@ -63,7 +68,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
 
-    implementation(libs.androidx.compose.runtime)
+
     implementation(libs.androidx.compose.material.icons.extended)
 
     // ✅ activity-compose

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,10 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import `in`.emergencyWbApp.essentials.PremiumLauncher
 import `in`.emergencyWbApp.essentials.R
 import kotlinx.coroutines.launch
 
@@ -129,6 +132,7 @@ fun EssentialsPagerScreen() {
 private fun TopAppHeader(
     onSettingsClick: () -> Unit
 ) {
+    val context = LocalContext.current
     var showMenu by remember { mutableStateOf(false) }
 
     Surface(
@@ -229,18 +233,19 @@ private fun TopAppHeader(
 
                     DropdownMenuItem(
                         text = {
-                            Text(stringResource(R.string.menu_about))
+                            Text("Premium")
                         },
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Filled.Info,
+                                imageVector = Icons.Filled.Star,
                                 contentDescription = null,
                                 tint = TextPrimary
                             )
                         },
                         onClick = {
                             showMenu = false
-                            // TODO: About page
+                            PremiumLauncher.openPremium(context)
+                            // TODO: Pro page
                         }
                     )
                 }
