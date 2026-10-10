@@ -64,3 +64,4 @@ out/
 
 # Google Services config file
 # google-services.json
+/.idea/
