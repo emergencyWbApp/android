@@ -1,21 +1,20 @@
 plugins {
     alias(libs.plugins.android.application)
+
+
 }
 
 android {
     namespace = "in.emergencyWbApp"
-    compileSdk {
-        version = release(37) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
+
 
     defaultConfig {
         applicationId = "in.emergencyWbApp"
         minSdk = 24
-        targetSdk = 37
-        versionCode = 11
-        versionName = "1.0.11"
+        targetSdk = 36
+        versionCode = 13
+        versionName = "1.0.13"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,6 +44,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 
+
+
     api(libs.androidx.collection)
     api(libs.androidx.collection.ktx)
+    api(libs.androidx.work.runtime.ktx)
+    api(libs.androidx.hilt.work)
 }
