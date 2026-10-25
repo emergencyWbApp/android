@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.androidx.collection.ktx)
 
     implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.material3)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

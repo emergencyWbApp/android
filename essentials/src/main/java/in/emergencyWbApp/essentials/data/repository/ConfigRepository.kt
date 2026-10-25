@@ -1,8 +1,7 @@
 package `in`.emergencyWbApp.essentials.data.repository
 
 
-
-
+import com.google.gson.Gson
 import `in`.emergencyWbApp.essentials.data.local.dao.ConfigDao
 import `in`.emergencyWbApp.essentials.data.local.dao.PageDao
 import `in`.emergencyWbApp.essentials.data.local.entity.ConfigEntity
@@ -20,25 +19,32 @@ class ConfigRepository(
 
     fun getConfigFlow(): Flow<ConfigEntity?> = configDao.getConfigFlow()
     fun getPagesFlow(): Flow<List<PageEntity>> = pageDao.getPagesFlow()
+    fun getMenuPagesFlow(): Flow<List<PageEntity>> = pageDao.getMenuPagesFlow()
 
     suspend fun hasCachedData(): Boolean =
         configDao.getConfig() != null && pageDao.getPages().isNotEmpty()
 
-    /** API → Room. Fail হলে cache অটুট থাকে। */
     suspend fun syncAll(): Result<Unit> = try {
+        // 1. Config
         val configDto = api.getConfig()
-        val pagesDto  = api.getPages()
-
-        // config — single row, REPLACE যথেষ্ট
         configDao.save(configDto.toEntity())
 
-        // pages — orphan delete সহ
-        val newPages = pagesDto.pages.map { it.toEntity() }
-        if (newPages.isEmpty()) {
-            pageDao.clear()
-        } else {
-            pageDao.saveAll(newPages)
-            pageDao.deleteNotIn(newPages.map { it.id })
+        // 2. Main pages — API-র ক্রমে (কোনো sort দরকার নেই)
+        val mainPagesDto = api.getPages()
+        pageDao.clearMainPages()
+        if (mainPagesDto.pages.isNotEmpty()) {
+            pageDao.saveAll(
+                mainPagesDto.pages.map { it.toEntity(isMenu = false) }
+            )
+        }
+
+        // 3. Menu pages — API-র ক্রমে
+        val menuPagesDto = api.getMenuPages()
+        pageDao.clearMenuPages()
+        if (menuPagesDto.pages.isNotEmpty()) {
+            pageDao.saveAll(
+                menuPagesDto.pages.map { it.toEntity(isMenu = true) }
+            )
         }
 
         Result.success(Unit)
@@ -63,11 +69,12 @@ private fun ConfigDto.toEntity() = ConfigEntity(
     syncedAt          = System.currentTimeMillis()
 )
 
-private fun PageDto.toEntity() = PageEntity(
-    id     = id,
-    title  = title,
-    iconOutline   = iconOutline,
-    iconFill = iconFill,
-    order  = order,
-    module = module
+private val gson = Gson()
+private fun PageDto.toEntity(isMenu: Boolean) = PageEntity(
+    id          = id,
+    title       = title,
+    iconOutline = iconOutline,
+    iconFill    = iconFill,
+    isMenu      = isMenu,
+    blocksJson  = if (blocks != null) gson.toJson(blocks) else "[]"
 )

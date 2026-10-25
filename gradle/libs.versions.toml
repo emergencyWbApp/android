@@ -23,6 +23,7 @@ hilt = "2.60.1"
 ksp = "2.3.10"
 collection = "1.4.5"
 androidxLifecycle = "2.11.0"
+uiGraphics = "1.12.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +59,7 @@ androidx-collection-ktx = { group = "androidx.collection", name = "collection-kt
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

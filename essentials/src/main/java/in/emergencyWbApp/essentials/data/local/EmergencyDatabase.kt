@@ -14,7 +14,7 @@ import `in`.emergencyWbApp.essentials.data.local.entity.PageEntity
         PageEntity::class,
         ConfigEntity::class
     ],
-    version = 3,
+    version = 6,
     exportSchema = false
 )
 abstract class EmergencyDatabase : RoomDatabase() {

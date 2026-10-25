@@ -9,8 +9,8 @@ import androidx.room.PrimaryKey
 data class PageEntity(
     @PrimaryKey val id: String,
     val title: String,
-    val iconOutline: String,
-    val iconFill: String,
-    val order: Int,
-    val module: String
+    val iconOutline: String?,
+    val iconFill: String?,
+    val isMenu: Boolean,
+    val blocksJson: String? = null
 )

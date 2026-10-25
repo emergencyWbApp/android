@@ -1,18 +1,23 @@
 package `in`.emergencyWbApp.essentials
 
-
-
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log.i
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
@@ -23,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.DpOffset
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
@@ -51,10 +57,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
-
 import `in`.emergencyWbApp.essentials.ui.DynamicIcon
 import `in`.emergencyWbApp.essentials.ui.IconVariant
+import `in`.emergencyWbApp.essentials.ui.QuickActionSheet
+import `in`.emergencyWbApp.essentials.ui.blocks.BlockParser
+import `in`.emergencyWbApp.essentials.ui.blocks.RenderBlocks
+import `in`.emergencyWbApp.essentials.ui.theme.MeshGradientBackground
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -115,6 +123,16 @@ private fun EssentialsRoot() {
     var isSyncing by remember { mutableStateOf(false) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
 
+    // 🆕 Menu state
+    var menuPages by remember { mutableStateOf<List<PageEntity>>(emptyList()) }
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    // 🆕 Quick Action Bottom Sheet State
+    var showQuickActionSheet by remember { mutableStateOf(false) }
+    var selectedAction by remember { mutableStateOf<String?>(null) }
+    var selectedTitle by remember { mutableStateOf("") }
+    var selectedSubtitle by remember { mutableStateOf("") }
+
     // ── Room flow: config ───────────────────────────────────
     LaunchedEffect(Unit) {
         repo.getConfigFlow().collectLatest { config = it }
@@ -127,6 +145,13 @@ private fun EssentialsRoot() {
             if (selectedPageId == null || list.none { it.id == selectedPageId }) {
                 selectedPageId = list.firstOrNull()?.id
             }
+        }
+    }
+
+    // 🆕 Room flow: menu pages
+    LaunchedEffect(Unit) {
+        repo.getMenuPagesFlow().collectLatest { list ->
+            menuPages = list
         }
     }
 
@@ -146,10 +171,9 @@ private fun EssentialsRoot() {
     val hasContent = config != null && pages.isNotEmpty()
 
     // 🎯 AppTheme wrap — theme API থেকে, defaults + locks merge
-    //    config null হলেও ThemeMapper.buildTokens(null) → defaults return করে।
     AppTheme(themeDto = ThemeMapper.parseThemeDto(config?.themeJson)) {
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        MeshGradientBackground {
 
             when {
 
@@ -218,10 +242,11 @@ private fun EssentialsRoot() {
                                     )
                                 },
                                 colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = tokens.topBarBg,
+                                    containerColor = Color.Transparent,
                                     titleContentColor = tokens.topBarTitle
                                 ),
                                 actions = {
+                                    // 1️⃣ Sync / Refresh button
                                     if (isSyncing) {
                                         CircularProgressIndicator(
                                             modifier = Modifier.size(20.dp),
@@ -240,50 +265,106 @@ private fun EssentialsRoot() {
                                             )
                                         }
                                     }
+
+                                    // 2️⃣ 🎯 3-Dots Menu
+                                    Box {
+                                        IconButton(onClick = { menuExpanded = true }) {
+                                            Icon(
+                                                Icons.Default.MoreVert,
+                                                contentDescription = "More options",
+                                                tint = tokens.topBarTitle
+                                            )
+                                        }
+
+                                        DropdownMenu(
+                                            expanded = menuExpanded,
+                                            onDismissRequest = { menuExpanded = false },
+                                            offset = DpOffset(0.dp, 8.dp)
+                                        ) {
+                                            if (menuPages.isEmpty()) {
+                                                DropdownMenuItem(
+                                                    text = {
+                                                        Text(
+                                                            "No menu items",
+                                                            fontSize = 14.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    },
+                                                    onClick = { menuExpanded = false }
+                                                )
+                                            } else {
+                                                menuPages.forEach { page ->
+                                                    DropdownMenuItem(
+                                                        text = {
+                                                            Text(
+                                                                text = page.title,
+                                                                fontSize = 15.sp,
+                                                                fontWeight = FontWeight.Medium
+                                                            )
+                                                        },
+                                                        onClick = {
+                                                            menuExpanded = false
+                                                            // TODO: page.id অনুযায়ী navigation বা action
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             )
                         },
                         bottomBar = {
-                            val tokens = AppThemeValues.tokens
-                            NavigationBar(containerColor = tokens.navBg) {
-                                pages.forEach { page ->
-                                    val isSelected = selectedPageId == page.id
 
-                                    NavigationBarItem(
-                                        selected = isSelected,
-                                        onClick = {
-                                            if (isSelected) {
-                                                scope.launch {
-                                                    pagerState.animateScrollToPage(pages.indexOf(page))
+                                NavigationBar(containerColor = tokens.navBg) {
+                                    pages.forEach { page ->
+                                        val isSelected = selectedPageId == page.id
+
+                                        NavigationBarItem(
+                                            selected = isSelected,
+                                            onClick = {
+                                                if (isSelected) {
+                                                    scope.launch {
+                                                        pagerState.animateScrollToPage(
+                                                            pages.indexOf(
+                                                                page
+                                                            )
+                                                        )
+                                                    }
+                                                } else {
+                                                    selectedPageId = page.id
                                                 }
-                                            } else {
-                                                selectedPageId = page.id
+                                            },
+                                            colors = NavigationBarItemDefaults.colors(
+                                                selectedIconColor = tokens.navSelected,
+                                                selectedTextColor = tokens.navSelected,
+                                                indicatorColor = tokens.navIndicator,
+                                                unselectedIconColor = tokens.navUnselected,
+                                                unselectedTextColor = tokens.navUnselected
+                                            ),
+                                            icon = {
+                                                // Null safety handled with ?: ""
+                                                DynamicIcon(
+                                                    name = if (isSelected) page.iconFill
+                                                        ?: "" else page.iconOutline ?: "",
+                                                    variant = if (isSelected) IconVariant.FILL else IconVariant.OUTLINE,
+                                                    contentDescription = page.title,
+                                                    modifier = Modifier.size(tokens.navIconSizeDp.dp)
+                                                )
+                                            },
+                                            label = {
+                                                Text(
+                                                    page.title,
+                                                    fontSize = tokens.navLabelSizeSp.sp
+                                                )
                                             }
-                                        },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor   = tokens.navSelected,
-                                            selectedTextColor   = tokens.navSelected,
-                                            indicatorColor      = tokens.navIndicator,
-                                            unselectedIconColor = tokens.navUnselected,
-                                            unselectedTextColor = tokens.navUnselected
-                                        ),
-                                        icon = {
-                                            // 🎯 Selected → fill, Unselected → outline
-                                            //    tint = LocalContentColor → M3 auto (selected red / unselected gray)
-                                            DynamicIcon(
-                                                name = if (isSelected) page.iconFill else page.iconOutline,
-                                                variant = if (isSelected) IconVariant.FILL else IconVariant.OUTLINE,
-                                                contentDescription = page.title,
-                                                modifier = Modifier.size(tokens.navIconSizeDp.dp)
-                                            )
-                                        },
-                                        label = {
-                                            Text(page.title, fontSize = tokens.navLabelSizeSp.sp)
-                                        }
-                                    )
+                                        )
+                                    }
                                 }
-                            }
-                        }
+
+                        },
+                        containerColor = Color.Transparent,
+                        contentWindowInsets = WindowInsets(0, 0, 0, 0)
                     ) { padding ->
                         HorizontalPager(
                             state = pagerState,
@@ -293,10 +374,45 @@ private fun EssentialsRoot() {
                                 .padding(padding)
                                 .fillMaxSize()
                         ) { index ->
-                            PagePlaceholder(page = pages[index])
+                            // 🎯 এখানে PageContent কল করা হয়েছে
+                            PageContent(
+                                page = pages[index],
+                                context = context,
+                                onActionClick = { action, title, subtitle ->
+                                    // 🎯 Quick Action Popup-এর জন্য স্টেট সেট করা হচ্ছে
+                                    selectedAction = action
+                                    selectedTitle = title
+                                    selectedSubtitle = subtitle
+                                    showQuickActionSheet = true
+                                })
                         }
+                        // 🎯 Quick Action Bottom Sheet
+                        if (showQuickActionSheet && selectedAction != null) {
+                            QuickActionSheet(
+                                title = selectedTitle,
+                                subtitle = selectedSubtitle,
+                                actionType = selectedAction!!,
+                                onDismiss = { showQuickActionSheet = false },
+                                onCallClick = {
+                                    val number = selectedAction!!.removePrefix("tel:").trim()
+                                    if (number.isNotEmpty() && number != "xxx") {
+                                        try {
+                                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
+                                            context.startActivity(intent)
+                                        } catch (e: Exception) {
+                                            Toast.makeText(context, "No dialer app found", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                },
+                                onViewDetailsClick = {
+                                    Toast.makeText(context, "Navigate to: ${selectedAction!!.removePrefix("navigate:")}", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+
                     }
                 }
+
             }
         }
     }
@@ -480,26 +596,49 @@ private fun OfflineFallbackScreen(
 }
 
 // ──────────────────────────────────────────────────────────
-// Page content placeholder — পরে blocks render হবে
+// Page Content Renderer (Dynamic Blocks)
 // ──────────────────────────────────────────────────────────
 
 @Composable
-private fun PagePlaceholder(page: PageEntity) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            DynamicIcon(
-                name = page.iconOutline,
-                variant = IconVariant.OUTLINE,
-                contentDescription = null,
-                modifier = Modifier.size(72.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
+private fun PageContent(
+    page: PageEntity,
+    context: Context,
+    onActionClick: (action: String, title: String, subtitle: String) -> Unit
+) {
+    val blocks = remember(page.blocksJson) {
+        BlockParser.parseJsonString(page.blocksJson)
+    }
+
+    if (blocks.isEmpty()) {
+        // ব্লক খালি থাকলে
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                DynamicIcon(
+                    name = page.iconOutline ?: "",
+                    variant = IconVariant.OUTLINE,
+                    contentDescription = null,
+                    modifier = Modifier.size(72.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    page.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(8.dp))
+                Text("Coming Soon", color = Color.Gray)
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        ) {
             Spacer(Modifier.height(16.dp))
-            Text(
-                page.title,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
+            RenderBlocks(blocks = blocks, onAction = { action, title, subtitle ->
+                onActionClick(action, title, subtitle)
+            })
+            Spacer(Modifier.height(16.dp))
         }
     }
 }

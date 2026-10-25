@@ -14,8 +14,8 @@ android {
         applicationId = "in.emergencyWbApp"
         minSdk = 24
         targetSdk = 36
-        versionCode = 14
-        versionName = "1.0.14"
+        versionCode = 17
+        versionName = "1.0.17"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

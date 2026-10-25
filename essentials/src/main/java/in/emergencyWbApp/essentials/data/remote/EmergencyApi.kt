@@ -13,4 +13,7 @@ interface EmergencyApi {
 
     @GET("pages/main")
     suspend fun getPages(): PagesResponseDto
+
+    @GET("pages/menu")
+    suspend fun getMenuPages(): PagesResponseDto
 }
